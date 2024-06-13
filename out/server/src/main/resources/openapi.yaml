@@ -1,0 +1,307 @@
+openapi: 3.0.3
+info:
+  description: API for managing events and tickets
+  title: Event Management API
+  version: 1.0.0
+servers:
+- url: http://localhost:8080
+tags:
+- description: Operations related to events
+  name: events
+- description: Operations related to users
+  name: users
+paths:
+  /events:
+    get:
+      operationId: getEvents
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Event'
+                type: array
+          description: A list of events
+      summary: Get all events
+      tags:
+      - events
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: events
+  /eventId:
+    get:
+      operationId: getEventId
+      parameters:
+      - explode: true
+        in: query
+        name: event
+        required: true
+        schema:
+          $ref: '#/components/schemas/Event'
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: integer
+          description: Event ID
+      summary: Get event ID of a specific event
+      tags:
+      - events
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: events
+  /event/{eventId}:
+    delete:
+      operationId: deleteEvent
+      parameters:
+      - explode: false
+        in: path
+        name: eventId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "204":
+          description: Event deleted
+      summary: Delete an event
+      tags:
+      - events
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: events
+    get:
+      operationId: getSpecificEvent
+      parameters:
+      - explode: false
+        in: path
+        name: eventId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+          description: A specific event
+      summary: Get a specific event
+      tags:
+      - events
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: events
+    put:
+      operationId: updateEvent
+      parameters:
+      - explode: false
+        in: path
+        name: eventId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'
+        description: Event object that needs to be updated
+        required: true
+      responses:
+        "204":
+          description: Event updated
+      summary: Update an event
+      tags:
+      - events
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: events
+  /tickets:
+    get:
+      operationId: getTickets
+      parameters:
+      - explode: true
+        in: query
+        name: userId
+        required: true
+        schema:
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Event'
+                type: array
+          description: A list of events
+      summary: Get all tickets for a user
+      tags:
+      - users
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: users
+    post:
+      operationId: addTicket
+      parameters:
+      - explode: true
+        in: query
+        name: userId
+        required: true
+        schema:
+          type: integer
+        style: form
+      - explode: true
+        in: query
+        name: eventId
+        required: true
+        schema:
+          type: integer
+        style: form
+      responses:
+        "204":
+          description: Ticket added
+      summary: Add ticket
+      tags:
+      - users
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: users
+  /recommendations:
+    get:
+      operationId: getRecommendations
+      parameters:
+      - explode: true
+        in: query
+        name: userId
+        required: true
+        schema:
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Event'
+                type: array
+          description: A list of recommended events
+      summary: Get event recommendations for a user
+      tags:
+      - users
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: users
+  /login:
+    post:
+      operationId: validateLogin
+      parameters:
+      - explode: true
+        in: query
+        name: userName
+        required: true
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: userPassword
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: boolean
+          description: Login validation result
+      summary: Validate login
+      tags:
+      - users
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: users
+  /event:
+    post:
+      operationId: addEvent
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'
+        description: Event object that needs to be added
+        required: true
+      responses:
+        "204":
+          description: Event added
+      summary: Add event
+      tags:
+      - events
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: events
+components:
+  schemas:
+    Event:
+      example:
+        eventId: 0
+        eventDuration: 1
+        eventImage: eventImage
+        eventExactLocation: eventExactLocation
+        eventLocation: eventLocation
+        eventDescription: eventDescription
+        eventPrice: 6
+        eventName: eventName
+        eventDate: 2000-01-23
+      properties:
+        eventId:
+          type: integer
+        eventName:
+          type: string
+        eventLocation:
+          type: string
+        eventDate:
+          format: date
+          type: string
+        eventDescription:
+          type: string
+        eventPrice:
+          type: integer
+        eventDuration:
+          type: integer
+        eventExactLocation:
+          type: string
+        eventImage:
+          type: string
+      type: object
+    User:
+      properties:
+        userId:
+          type: integer
+        userName:
+          type: string
+        userPassword:
+          type: string
+      type: object
